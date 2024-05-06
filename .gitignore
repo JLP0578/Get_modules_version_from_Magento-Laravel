@@ -1,4 +1,4 @@
 launch.bat
 crontab.txt
-process.env
-launch.env
+.process.env
+.launch.env
