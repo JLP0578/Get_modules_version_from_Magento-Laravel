@@ -1,1 +1,1 @@
-# Get_modules_version_from_Magento_-_Laravel
+# Get_modules_version_from_Magento-Laravel
