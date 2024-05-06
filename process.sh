@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./process.env
+source ./.process.env
 
 function afficher_aide {
     echo "Usage: $0 [options]"
@@ -19,16 +19,19 @@ function recup_module {
         mkdir -p "$dossier"
     fi
 
+
+    token=$LOCAL_TOKEN
     destination_url=$PROD_DESTINATION_URL
     if [[ "$1" == true ]]; then
         destination_url=$DEV_DESTINATION_URL
+        token=$DEV_TOKEN
     fi
 
     # Déclaration du tableau associatif
     declare -A tableau_assoc
-    tableau_assoc["patch"]="--patch-only"
-    tableau_assoc["minor"]="--minor-only"
     tableau_assoc["major"]="--major-only"
+    tableau_assoc["minor"]="--minor-only"
+    tableau_assoc["patch"]="--patch-only"
 
     # Boucle à travers les clés du tableau associatif
     for cle in "${!tableau_assoc[@]}"
@@ -53,7 +56,7 @@ function recup_module {
         # echo $json_output
 
         # Envoyer la sortie via une requête curl (remplacez URL_DE_DESTINATION par l'URL de destination)
-        curl -vvv -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "$json_output" --insecure $destination_url 
+        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -d "$json_output" --insecure $destination_url 
         echo "  [Envoie CURL] : OK"
     done
 }
