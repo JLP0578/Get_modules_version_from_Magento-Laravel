@@ -81,12 +81,18 @@ Pour `.launch.env`
 Pour `.process.env`
 
 
-| Nom                    | Description                                                                            |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| `PROD_TOKEN`           | Le token de connexion a l'API<br /> Laravel de prod                                    |
-| `DEV_TOKEN`            | Le token de connexion a l'API<br /> Laravel de dev                                     |
-| `PROD_DESTINATION_URL` | Lien complet vers la route API de prod (ex :`https://domaine.com/api/votre/route/api`) |
-| `DEV_DESTINATION_URL`  | Lien complet vers la route API de dev (ex :`https://domaine.com/api/votre/route/api`)  |
+| Nom                          | Description                                                           |
+| ---------------------------- | --------------------------------------------------------------------- |
+| `PROD_DOMAINE`               | URL du domaine de prod (ex :`https://domaine.com`)                    |
+| `PROD_TOKEN_VERSIONING`      | Le token de connexion a l'API Verisoning Laravel de prod              |
+| `PROD_URI_VERSIONING`        | URI de la route API versioning prod (ex :`/api/votre/route/api`)      |
+| `PROD_TOKEN_ERRORMONITORING` | Le token de connexion a l'API errorMonitoring Laravel de prod         |
+| `PROD_URI_ERRORMONITORING`   | URI de la route API errorMonitoring prod (ex :`/api/votre/route/api`) |
+| `DEV_DOMAINE`                | URL du domaine de dev (ex :`https://domaine.com`)                     |
+| `DEV_TOKEN_VERSIONING`       | Le token de connexion a l'API Verisoning Laravel de dev               |
+| `DEV_URI_VERSIONING`         | URI de la route API versioning dev (ex :`/api/votre/route/api`)       |
+| `DEV_TOKEN_ERRORMONITORING`  | Le token de connexion a l'API errorMonitoring Laravel de dev          |
+| `DEV_URI_ERRORMONITORING`    | URI de la route API errorMonitoring prod (ex :`/api/votre/route/api`) |
 
 ### Procedure complète
 
