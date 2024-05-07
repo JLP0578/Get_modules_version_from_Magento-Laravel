@@ -9,23 +9,37 @@ function afficher_aide {
     echo "  --dev                Utilisation du BO dev"
 }
 
+function check {
+    EXITCODE=$?
+    if [ "$EXITCODE" -ne "0" ]; then
+        destination_url=$PROD_DOMAINE$PROD_URI_ERRORMONITORING
+        token=$PROD_TOKEN_ERRORMONITORING
+        if [[ "$1" == true ]]; then
+            destination_url=$DEV_DOMAINE$DEV_URI_ERRORMONITORING
+            token=$DEV_TOKEN_ERRORMONITORING
+        fi
+
+        body="{\"task\": \"$2\", \"action\": \"$3\", \"error_log\": \"$EXITCODE\"}"
+
+        #Appel curl à l'API errorMonitoring
+        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -d "$body" --insecure $destination_url
+
+        exit $EXITCODE
+    fi
+}
+
 function recup_module {
-    # Se placer dans le répertoire /app
-    cd /app || exit
-
-    # TODO: Faire la mise en place des logs
-    dossier="/app/logs"
-    if [ ! -d "$dossier" ]; then
-        mkdir -p "$dossier"
-    fi
-
-
-    token=$LOCAL_TOKEN
-    destination_url=$PROD_DESTINATION_URL
+    destination_url=$PROD_DOMAINE$PROD_URI_VERSIONING
+    token=$PROD_TOKEN_VERSIONING
     if [[ "$1" == true ]]; then
-        destination_url=$DEV_DESTINATION_URL
-        token=$DEV_TOKEN
+        destination_url=$DEV_DOMAINE$DEV_URI_VERSIONING
+        token=$DEV_TOKEN_VERSIONING
     fi
+
+    # Se placer dans le répertoire /app
+    cd /app
+    check "$1" $CONTAINER_NAME $environment'_cd_app'
+    echo "[Changement Dossier] : OK"
 
     # Déclaration du tableau associatif
     declare -A tableau_assoc
@@ -38,25 +52,22 @@ function recup_module {
     do
         echo "[$cle]";
 
-        # Exécuter la commande composer outdated et stocker la sortie dans une variable
-        composer_output=$(composer outdated --ignore-platform-reqs --direct --strict --locked "${tableau_assoc[$cle]}" --sort-by-age --no-interaction --no-plugins --no-scripts --no-cache --format json)
-        echo "  [Récuppération Modules] : OK"
-
-        # Supprimer les lignes avec les clés spécifiées du JSON
-        modified_output=$(echo "$composer_output" | awk '!/("direct-dependency"|"homepage"|"release-age"|"latest-status"|"description"|"warning")/')
-        echo "  [Traitement AWK] : OK"
-
         # Définir l'environnement
         environment=$(composer show -s --name-only)
+        check "$1" $CONTAINER_NAME $cle'_composer_show_name'
         echo "  [Récuppération Nom du Projet] : OK"
+        
+        # Exécuter la commande composer outdated et stocker la sortie dans une variable
+        composer_output=$(composer outdated --ignore-platform-reqs --direct --strict --locked "${tableau_assoc[$cle]}" --no-interaction --no-plugins --no-scripts --no-cache --format json)
+        echo "  [Récuppération Modules] : OK"
 
         # Encapsuler le JSON modifié dans un nouvel objet JSON
-        json_output="{\"environnement\": \"$environment\", \"severity\": \"$cle\", \"modules\": $modified_output}"
+        json_output="{\"environnement\": \"$environment\", \"severity\": \"$cle\", \"modules\": $composer_output}"
         echo "  [Traitement JSON] : OK"
-        # echo $json_output
 
         # Envoyer la sortie via une requête curl (remplacez URL_DE_DESTINATION par l'URL de destination)
         curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -d "$json_output" --insecure $destination_url 
+        check "$1" $CONTAINER_NAME $cle'_curl'
         echo "  [Envoie CURL] : OK"
     done
 }
