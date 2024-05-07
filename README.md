@@ -1,4 +1,4 @@
-# Versioning des Modules
+# Versioning des Modules Magento & Laravel
 
 Le container docker pour le versioning en est à sa première version.
 
