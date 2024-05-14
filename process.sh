@@ -12,27 +12,31 @@ function afficher_aide {
 function check {
     EXITCODE=$?
     if [ "$EXITCODE" -ne "0" ]; then
-        destination_url=$PROD_DOMAINE$PROD_URI_ERRORMONITORING
+        destination_url='https://'$PROD_IP$PROD_URI_ERRORMONITORING
+        host=$PROD_DOMAINE
         token=$PROD_TOKEN_ERRORMONITORING
         if [[ "$1" == true ]]; then
-            destination_url=$DEV_DOMAINE$DEV_URI_ERRORMONITORING
+            destination_url='https://'$DEV_IP$DEV_URI_ERRORMONITORING
+            host=$DEV_DOMAINE
             token=$DEV_TOKEN_ERRORMONITORING
         fi
 
         body="{\"task\": \"$2\", \"action\": \"$3\", \"error_log\": \"$EXITCODE\"}"
 
         #Appel curl à l'API errorMonitoring
-        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -d "$body" --insecure $destination_url
+        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H "Host: $host" -d "$body" --insecure $destination_url
 
         exit $EXITCODE
     fi
 }
 
 function recup_module {
-    destination_url=$PROD_DOMAINE$PROD_URI_VERSIONING
+    destination_url='https://'$PROD_IP$PROD_URI_ERRORMONITORING
+    host=$PROD_DOMAINE
     token=$PROD_TOKEN_VERSIONING
     if [[ "$1" == true ]]; then
-        destination_url=$DEV_DOMAINE$DEV_URI_VERSIONING
+        destination_url='https://'$DEV_IP$DEV_URI_ERRORMONITORING
+        host=$DEV_DOMAINE
         token=$DEV_TOKEN_VERSIONING
     fi
 
@@ -66,7 +70,7 @@ function recup_module {
         echo "  [Traitement JSON] : OK"
 
         # Envoyer la sortie via une requête curl (remplacez URL_DE_DESTINATION par l'URL de destination)
-        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -d "$json_output" --insecure $destination_url 
+        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H "Host: $host" -d "$json_output" --insecure $destination_url 
         check "$1" $CONTAINER_NAME $cle'_curl'
         echo "  [Envoie CURL] : OK"
     done
