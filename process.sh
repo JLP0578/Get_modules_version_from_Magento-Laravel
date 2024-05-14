@@ -31,11 +31,11 @@ function check {
 }
 
 function recup_module {
-    destination_url='https://'$PROD_IP$PROD_URI_ERRORMONITORING
+    destination_url='https://'$PROD_IP$PROD_URI_VERSIONING
     host=$PROD_DOMAINE
     token=$PROD_TOKEN_VERSIONING
     if [[ "$1" == true ]]; then
-        destination_url='https://'$DEV_IP$DEV_URI_ERRORMONITORING
+        destination_url='https://'$DEV_IP$DEV_URI_VERSIONING
         host=$DEV_DOMAINE
         token=$DEV_TOKEN_VERSIONING
     fi
