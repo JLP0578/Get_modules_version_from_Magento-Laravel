@@ -24,7 +24,7 @@ function check {
         body="{\"task\": \"$2\", \"action\": \"$3\", \"error_log\": \"$EXITCODE\"}"
 
         #Appel curl à l'API errorMonitoring
-        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H "Host: $host" -d "$body" --insecure $destination_url
+        curl -s -o /dev/null -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H "Host: $host" -d "$body" --insecure $destination_url
 
         exit $EXITCODE
     fi
@@ -70,7 +70,7 @@ function recup_module {
         echo "  [Traitement JSON] : OK"
 
         # Envoyer la sortie via une requête curl (remplacez URL_DE_DESTINATION par l'URL de destination)
-        curl -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H "Host: $host" -d "$json_output" --insecure $destination_url 
+        curl -s -o /dev/null -X POST -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H "Host: $host" -d "$json_output" --insecure $destination_url 
         check "$1" $CONTAINER_NAME $cle'_curl'
         echo "  [Envoie CURL] : OK"
     done
