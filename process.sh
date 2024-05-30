@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./.process.env
+source /app/.process.env
 
 function afficher_aide {
     echo "Usage: $0 [options]"
